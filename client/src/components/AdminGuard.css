@@ -1,0 +1,9 @@
+.admin-guard{width:min(100%,920px);display:grid;gap:1rem}
+.admin-guard-card,.admin-guard-actions{background:#fff;border:1px solid #d7dee3;border-radius:16px;box-shadow:0 10px 30px rgba(10,37,64,.06)}
+.admin-guard-card{padding:1.5rem;display:grid;gap:.7rem}
+.admin-guard-card h1{margin:0}
+.admin-guard-card p{margin:0;color:#556173}
+.admin-guard-card input{padding:.7rem;border-radius:8px;border:1px solid #c8d4de}
+.admin-guard-card button,.admin-guard-actions button{padding:.7rem 1rem;border-radius:10px;border:0;background:linear-gradient(135deg,#0f8f79,#1188a1);color:#fff;font-weight:700;cursor:pointer}
+.admin-guard-actions{padding:.9rem 1rem;display:flex;justify-content:space-between;align-items:center}
+.admin-guard-error{margin:0;color:#b42318;font-weight:600}

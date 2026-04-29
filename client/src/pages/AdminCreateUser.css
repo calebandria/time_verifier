@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root{
+  --accent: #0f8f79;
+  --muted: #556173;
+}
+
+.admin-page {
+  width: min(100%, 920px);
+}
+
+.admin-card {
+  background: #fff;
+  border: 1px solid #d7dee3;
+  border-radius: 16px;
+  padding: 1.6rem;
+  box-shadow: 0 10px 30px rgba(10, 37, 64, 0.06);
+}
+
+.admin-card h1{margin:0 0 0.3rem}
+.admin-note{color:var(--muted);margin:0 0 1rem}
+
+.admin-form{display:grid;gap:0.6rem}
+.admin-form label{font-weight:600}
+.admin-form input, .admin-form select{padding:0.6rem;border-radius:8px;border:1px solid #c8d4de}
+
+.admin-form button{margin-top:0.6rem;padding:0.7rem;border-radius:10px;border:0;background:linear-gradient(135deg,var(--accent),#1188a1);color:#fff;font-weight:700}
+
+.admin-delete{margin-top:1.2rem;padding-top:1rem;border-top:1px solid #e1e8ef}
+.admin-delete h2{margin:0 0 .2rem}
+
+.admin-message{margin-top:0.8rem;font-weight:600;color:#0b6f5e}

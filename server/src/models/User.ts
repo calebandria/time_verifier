@@ -1,9 +1,12 @@
 import mongoose from 'mongoose'
 
+export const userRoles = ['RH', 'Manager', 'Admin'] as const
+export type UserRole = (typeof userRoles)[number]
+
 export interface IUser extends mongoose.Document {
   email: string
   passwordHash: string
-  role: 'RH' | 'Manager'
+  role: UserRole
   createdAt: Date
   updatedAt: Date
 }
@@ -23,7 +26,7 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ['RH', 'Manager'],
+      enum: userRoles,
       required: true,
     },
   },

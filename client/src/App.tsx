@@ -1,60 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react'
+import LoginPage from './pages/LoginPage';
+import AdminCreateUser from './pages/AdminCreateUser';
+import AdminGuard from './components/AdminGuard'
 import './App.css';
 
-type HealthResponse = {
-  status: string;
-  service: string;
-};
-
-type TimeResponse = {
-  iso: string;
-  unixMs: number;
-  timezone: string;
-};
-
 function App() {
-  const [status, setStatus] = useState<string>('Loading API status...');
-  const [serverTime, setServerTime] = useState<string>('');
-
-  useEffect(() => {
-    async function fetchApiData(): Promise<void> {
-      try {
-        const [healthRes, timeRes] = await Promise.all([
-          fetch('/api/health'),
-          fetch('/api/time'),
-        ]);
-
-        if (!healthRes.ok || !timeRes.ok) {
-          throw new Error('API returned a non-success status code.');
-        }
-
-        const healthData: HealthResponse = await healthRes.json();
-        const timeData: TimeResponse = await timeRes.json();
-
-        setStatus(`Backend: ${healthData.status}`);
-        setServerTime(timeData.iso);
-      } catch {
-        setStatus('Backend unreachable. Start the server on port 5000.');
-      }
-    }
-
-    void fetchApiData();
-  }, []);
+  const [view, setView] = useState<'login' | 'admin'>('login')
 
   return (
-    <main className="app-shell">
-      <h1>Time Verifier (MERN + TypeScript)</h1>
-      <p className="status">{status}</p>
-      <p className="time-label">Server Time (ISO):</p>
-      <code className="time-value">{serverTime || 'No time received yet'}</code>
-
-      <div className="commands">
-        <h2>Run Commands</h2>
-        <pre>npm run dev</pre>
-        <pre>npm run typecheck</pre>
+    <main className="app-root">
+      <div className="app-nav">
+        <button onClick={() => setView('login')} className={view === 'login' ? 'active' : ''}>Login</button>
+        <button onClick={() => setView('admin')} className={view === 'admin' ? 'active' : ''}>Admin</button>
       </div>
+      {view === 'login' ? <LoginPage /> : (
+        <AdminGuard>
+          <AdminCreateUser />
+        </AdminGuard>
+      )}
     </main>
-  );
+  )
 }
 
 export default App;
