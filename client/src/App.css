@@ -1,0 +1,52 @@
+.app-shell {
+  max-width: 780px;
+  margin: 5rem auto;
+  padding: 2rem;
+  border: 1px solid #d7dee3;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(10, 37, 64, 0.08);
+}
+
+h1 {
+  margin: 0 0 1rem;
+  color: #11233a;
+}
+
+.status {
+  font-weight: 600;
+  color: #0b6b43;
+  margin: 0 0 1rem;
+}
+
+.time-label {
+  margin: 0;
+  color: #3e4a56;
+}
+
+.time-value {
+  display: block;
+  margin-top: 0.4rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  background: #f5f8fa;
+  color: #1e2933;
+  overflow-wrap: anywhere;
+}
+
+.commands {
+  margin-top: 1.6rem;
+}
+
+.commands h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.commands pre {
+  margin: 0 0 0.6rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #f8fafc;
+}
