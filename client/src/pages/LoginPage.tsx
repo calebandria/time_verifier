@@ -1,22 +1,32 @@
-import { FormEvent, useState } from 'react';
-import './LoginPage.css';
+import { FormEvent, useState } from 'react'
+import './LoginPage.css'
 
-function LoginPage() {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+type LoginUser = {
+  id: string
+  email: string
+  role: 'RH' | 'Manager' | 'Admin'
+}
+
+type LoginPageProps = {
+  onLoginSuccess: (user: LoginUser) => void
+}
+
+function LoginPage({ onLoginSuccess }: LoginPageProps) {
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [message, setMessage] = useState<string>('')
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
-    event.preventDefault();
+    event.preventDefault()
 
     if (!email || !password) {
-      setMessage('Please enter both email and password.');
-      return;
+      setMessage('Please enter both email and password.')
+      return
     }
 
-    setIsSubmitting(true);
-    setMessage('');
+    setIsSubmitting(true)
+    setMessage('')
 
     try {
       const response = await fetch('/api/v1/auth/login', {
@@ -25,19 +35,36 @@ function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-      });
+      })
 
-      const payload = await response.json();
+      const payload = await response.json()
 
       if (!response.ok) {
-        throw new Error(payload?.error?.message ?? 'La connexion a échoué.');
+        throw new Error(payload?.error?.message ?? 'La connexion a échoué.')
       }
 
-      setMessage(`Connexion réussie pour le rôle ${payload.user.role}.`);
+      if (payload.user.role === 'Admin') {
+        const adminResponse = await fetch('/api/v1/auth/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        })
+
+        const adminPayload = await adminResponse.json()
+        if (!adminResponse.ok) {
+          throw new Error(adminPayload?.error?.message ?? 'Connexion admin impossible.')
+        }
+
+        localStorage.setItem('adminToken', adminPayload.token)
+      }
+
+      onLoginSuccess(payload.user)
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Une erreur est survenue.');
+      setMessage(error instanceof Error ? error.message : 'Une erreur est survenue.')
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
   }
 
@@ -45,8 +72,10 @@ function LoginPage() {
     <section className="login-page">
       <div className="login-card">
         <p className="login-kicker">Time Verifier</p>
-        <h1>Bienvenu</h1>
-        <p className="login-subtitle">Connectez-vous pour avoir accès au dashboard</p>
+        <h1>Bienvenue</h1>
+        <p className="login-subtitle">
+          Accédez à l'espace RH, au planning manager ou au panneau administrateur avec le même identifiant.
+        </p>
 
         <form className="login-form" onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
@@ -78,13 +107,13 @@ function LoginPage() {
 
         <div className="login-footer">
           <a href="#">Mot de passe oublié?</a>
-          <span>Comptes créés par un administrateur.</span>
+          <span>Flux de vérification planning vs. réalité observée.</span>
         </div>
 
         {message && <p className="login-message">{message}</p>}
       </div>
     </section>
-  );
+  )
 }
 
-export default LoginPage;
+export default LoginPage

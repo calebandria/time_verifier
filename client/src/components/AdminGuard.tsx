@@ -4,9 +4,10 @@ import './AdminGuard.css'
 
 type AdminGuardProps = {
   children: ReactNode
+  onLogout: () => void
 }
 
-function AdminGuard({ children }: AdminGuardProps) {
+function AdminGuard({ children, onLogout }: AdminGuardProps) {
   const [storedToken, setStoredToken] = useState(() => localStorage.getItem('adminToken') ?? '')
   const [error, setError] = useState('')
   const [email, setEmail] = useState('')
@@ -77,6 +78,7 @@ function AdminGuard({ children }: AdminGuardProps) {
     setEmail('')
     setPassword('')
     setError('')
+    onLogout()
   }
 
   if (!isUnlocked) {
@@ -117,7 +119,7 @@ function AdminGuard({ children }: AdminGuardProps) {
       <div className="admin-guard-actions">
         <span>Admin panel unlocked</span>
         <button type="button" onClick={handleLogout}>
-          Lock again
+          Déconnexion
         </button>
       </div>
       {children}
