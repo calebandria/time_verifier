@@ -11,6 +11,7 @@ type AppSession = {
   id: string
   email: string
   role: AppRole
+  team?: string
 }
 
 const SESSION_STORAGE_KEY = 'time-verifier-session'
@@ -63,10 +64,17 @@ function App() {
 
   return (
     <main className="app-root app-workspace-root">
-      {session.role === 'RH' && <RoleWorkspace role="RH" email={session.email} onLogout={handleLogout} />}
+      {session.role === 'RH' && (
+        <RoleWorkspace role="RH" email={session.email} team={session.team} onLogout={handleLogout} />
+      )}
 
       {session.role === 'Manager' && (
-        <RoleWorkspace role="Manager" email={session.email} onLogout={handleLogout} />
+        <RoleWorkspace
+          role="Manager"
+          email={session.email}
+          team={session.team}
+          onLogout={handleLogout}
+        />
       )}
 
       {session.role === 'Admin' && (

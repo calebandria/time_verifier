@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import authRoutes from './routes/auth';
+import verificationRoutes from './routes/verification';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1', verificationRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', service: 'time-verifier-api' });

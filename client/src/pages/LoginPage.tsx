@@ -5,6 +5,7 @@ type LoginUser = {
   id: string
   email: string
   role: 'RH' | 'Manager' | 'Admin'
+  team?: string
 }
 
 type LoginPageProps = {

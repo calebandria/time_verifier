@@ -14,6 +14,7 @@ async function main(): Promise<void> {
   const email = getArg('--email') || process.env.EMAIL
   const password = getArg('--password') || process.env.PASSWORD
   const role = getArg('--role') || process.env.ROLE
+  const team = getArg('--team') || process.env.TEAM
   const providedKey = getArg('--admin-key') || process.env.PROVISION_KEY
 
   const adminKey = process.env.ADMIN_KEY
@@ -38,6 +39,11 @@ async function main(): Promise<void> {
     process.exit(5)
   }
 
+  if (role === 'Manager' && !team?.trim()) {
+    console.error('Missing required --team for role=Manager')
+    process.exit(8)
+  }
+
   const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/time_verifier'
 
   try {
@@ -56,9 +62,15 @@ async function main(): Promise<void> {
       email: email.toLowerCase(),
       passwordHash,
       role,
+      team: role === 'Manager' ? team?.trim() : undefined,
     })
 
-    console.log('User created:', { id: user._id.toString(), email: user.email, role: user.role })
+    console.log('User created:', {
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role,
+      ...(user.team ? { team: user.team } : {}),
+    })
     process.exit(0)
   } catch (err) {
     console.error('Error creating user:', err)

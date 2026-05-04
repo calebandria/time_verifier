@@ -5,6 +5,7 @@ function AdminCreateUser() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<'RH' | 'Manager' | 'Admin'>('RH')
+  const [team, setTeam] = useState('')
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const adminToken = localStorage.getItem('adminToken') ?? ''
@@ -21,6 +22,11 @@ function AdminCreateUser() {
       return
     }
 
+    if (role === 'Manager' && !team.trim()) {
+      setMessage("Veuillez renseigner l'équipe du manager.")
+      return
+    }
+
     setIsSubmitting(true)
     try {
       const res = await fetch('/api/v1/auth/admin/create-user', {
@@ -29,7 +35,12 @@ function AdminCreateUser() {
           'Content-Type': 'application/json',
           ...(adminToken ? { Authorization: `Bearer ${adminToken}` } : {}),
         },
-        body: JSON.stringify({ email, password, role }),
+        body: JSON.stringify({
+          email,
+          password,
+          role,
+          ...(role === 'Manager' ? { team: team.trim() } : {}),
+        }),
       })
 
       const payload = await res.json()
@@ -39,6 +50,7 @@ function AdminCreateUser() {
         setMessage(`Utilisateur créé: ${payload.user.email} (${payload.user.role})`)
         setEmail('')
         setPassword('')
+        setTeam('')
       }
     } catch (err) {
       setMessage('Erreur réseau: ' + String(err))
@@ -100,6 +112,18 @@ function AdminCreateUser() {
             <option value="Manager">Manager</option>
             <option value="Admin">Admin</option>
           </select>
+
+          {role === 'Manager' && (
+            <>
+              <label>Équipe</label>
+              <input
+                value={team}
+                onChange={(e) => setTeam(e.target.value)}
+                placeholder="Ex: SEEDEXT"
+                type="text"
+              />
+            </>
+          )}
 
           <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Création...' : 'Créer utilisateur'}</button>
         </form>

@@ -40,7 +40,8 @@ describeIfMongo('Admin POST /api/v1/auth/admin/create-user', () => {
       .send({
         email: 'test2@example.com',
         password: 'password123',
-        role: 'Manager'
+        role: 'Manager',
+        team: 'SEEDEXT',
       })
 
     const user = await User.findOne({ email: 'test2@example.com' })
@@ -70,6 +71,38 @@ describeIfMongo('Admin POST /api/v1/auth/admin/create-user', () => {
 
     expect(response.status).toBe(400)
     expect(response.body.error.message).toContain('déjà enregistré')
+  })
+
+  it('should reject manager creation without team', async () => {
+    const response = await request(app)
+      .post('/api/v1/auth/admin/create-user')
+      .set(adminHeader)
+      .send({
+        email: 'manager-no-team@example.com',
+        password: 'password123',
+        role: 'Manager',
+      })
+
+    expect(response.status).toBe(400)
+    expect(response.body.error.message).toContain('team')
+  })
+
+  it('should save manager team when provided', async () => {
+    const response = await request(app)
+      .post('/api/v1/auth/admin/create-user')
+      .set(adminHeader)
+      .send({
+        email: 'manager-team@example.com',
+        password: 'password123',
+        role: 'Manager',
+        team: 'EVERSUN',
+      })
+
+    expect(response.status).toBe(201)
+    expect(response.body.user.team).toBe('EVERSUN')
+
+    const user = await User.findOne({ email: 'manager-team@example.com' })
+    expect(user?.team).toBe('EVERSUN')
   })
 
   it('should reject invalid email format', async () => {

@@ -10,6 +10,14 @@ const createUserSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
   role: Joi.string().valid(...userRoles).required(),
+  team: Joi.string().trim().when('role', {
+    is: 'Manager',
+    then: Joi.required().messages({
+      'any.required': "Le champ 'team' est obligatoire pour un Manager.",
+      'string.empty': "Le champ 'team' est obligatoire pour un Manager.",
+    }),
+    otherwise: Joi.optional().allow(''),
+  }),
 })
 
 const deleteUserSchema = Joi.object({
@@ -58,6 +66,7 @@ router.post('/register', async (req, res) => {
     }
 
     const { email, password, role } = value
+    const normalizedTeam = role === 'Manager' ? String(value.team).trim() : undefined
 
     // Check if email already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() })
@@ -78,6 +87,7 @@ router.post('/register', async (req, res) => {
       email: email.toLowerCase(),
       passwordHash,
       role,
+      team: normalizedTeam,
     })
 
     res.status(201).json({
@@ -85,6 +95,7 @@ router.post('/register', async (req, res) => {
         id: user._id,
         email: user.email,
         role: user.role,
+        ...(user.team && { team: user.team }),
       },
     })
   } catch (err) {
@@ -113,6 +124,7 @@ router.post('/admin/create-user', adminAuth, async (req, res) => {
     }
 
     const { email, password, role } = value
+    const normalizedTeam = role === 'Manager' ? String(value.team).trim() : undefined
 
     // Check if email already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() })
@@ -131,6 +143,7 @@ router.post('/admin/create-user', adminAuth, async (req, res) => {
       email: email.toLowerCase(),
       passwordHash,
       role,
+      team: normalizedTeam,
     })
 
     res.status(201).json({
@@ -138,6 +151,7 @@ router.post('/admin/create-user', adminAuth, async (req, res) => {
         id: user._id,
         email: user.email,
         role: user.role,
+        ...(user.team && { team: user.team }),
       },
     })
   } catch (err) {
@@ -245,6 +259,7 @@ router.post('/admin/login', async (req, res) => {
         id: user._id,
         email: user.email,
         role: user.role,
+        ...(user.team && { team: user.team }),
       },
     })
   } catch (err) {
@@ -299,6 +314,7 @@ router.post('/login', async (req, res) => {
         id: user._id,
         email: user.email,
         role: user.role,
+        ...(user.team && { team: user.team }),
       },
     })
   } catch (err) {
