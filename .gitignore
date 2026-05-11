@@ -25,6 +25,5 @@ yarn-error.log*
 server/uploads/
 
 # BMAD outputs are generated artifacts
-_bmad-output/
 
 
